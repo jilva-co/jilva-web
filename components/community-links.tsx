@@ -76,7 +76,7 @@ export function CommunityLinks() {
             <Icon name="arrow-up-right" className="size-3" />
           </a>
           <p className="mt-4 text-[10px] leading-relaxed text-dim">
-            Our writing lives with the source for now.
+            The foundations, documented here as they take shape.
           </p>
         </aside>
       </div>

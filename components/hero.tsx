@@ -35,7 +35,7 @@ export function Hero() {
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
             <a
-              href="#getting-started"
+              href={site.gettingStarted}
               className="primary-button inline-flex items-center justify-center gap-5 bg-foreground px-5 py-3 text-[13px] font-medium text-background hover:bg-white"
             >
               Get started
