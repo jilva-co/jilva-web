@@ -70,7 +70,7 @@ The setup block contains real contributor commands. It deliberately uses a sourc
 
 Update project links in `lib/site.ts` when documentation or community destinations change. Before assigning a custom domain, add the real canonical origin and social image to `app/layout.tsx`. No domain is assumed in the source.
 
-GitHub Discussions is not enabled for the project yet, so community conversation links use the active issue tracker. Change `site.discussions` when a dedicated forum is available. The intended GitHub destination for this website is `jilva-co/jilva-web`; this implementation does not create or push that repository.
+GitHub Discussions is not enabled for the project yet, so community conversation links use the active issue tracker. Change `site.discussions` when a dedicated forum is available. Website source: [jilva-co/jilva-web](https://github.com/jilva-co/jilva-web).
 
 ## License
 
