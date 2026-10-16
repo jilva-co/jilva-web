@@ -1,0 +1,9 @@
+node_modules/
+.next/
+out/
+.qa/
+.npm-cache/
+.sites-runtime/
+.git/
+package-lock.json
+next-env.d.ts
