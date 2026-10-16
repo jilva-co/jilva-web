@@ -31,7 +31,14 @@ app/
   icon.png               Existing Jilva logo
   not-found.tsx          Custom 404
   robots.ts              Static crawler policy
+  docs/
+    layout.tsx           Documentation shell and shared branding
+    docs.css             Responsive documentation typography and layout
+    [[...slug]]/page.tsx  Seven statically generated documentation routes
 components/
+  docs/
+    sidebar.tsx          Searchable page navigation and mobile disclosure
+    document.tsx         Article layout, contents, and previous/next links
   header.tsx             Navigation and mobile disclosure
   hero.tsx               Asymmetric introduction
   terminal-preview.tsx   Interactive terminal design study
@@ -45,6 +52,8 @@ components/
   icon.tsx               Small inline SVG icon set
   section-label.tsx      Shared section annotation
 lib/site.ts              Project URLs, metadata copy, and setup command
+lib/docs.ts              Documentation routes and navigation metadata
+lib/docs-content.tsx     Public guides, concepts, and roadmap content
 public/jilva-logo.png     Original, unmodified Jilva logo
 scripts/serve.mjs         Local production preview
 .openai/hosting.json      Sites identity and static output configuration
@@ -64,7 +73,23 @@ Jilva is in its **foundation phase**, with no published framework release. The f
 
 The terminal checklist is an explicitly labeled **interactive design study**, implemented in React for this website. It is not a running Jilva application or a released Rust API. Its “The idea” tab is conceptual prose, not runnable code. Checklist changes stay in the current page session.
 
-The setup block contains real contributor commands. It deliberately uses a source checkout rather than a premature `cargo add jilva` command. Framework code and roadmap details remain in the Rust repository.
+The setup block contains real contributor commands. It deliberately uses a source checkout rather than a premature `cargo add jilva` command. Public documentation lives on this website under `/docs/`; the Rust repository remains the source of framework code and contributor design records.
+
+## Documentation
+
+The documentation is part of the website, with no GitHub redirect or runtime Markdown fetch:
+
+- `/docs/` — introduction and project status
+- `/docs/getting-started/` — toolchain, source checkout, and workspace verification
+- `/docs/development/` — daily checks, local API reference, and troubleshooting
+- `/docs/architecture/` — crate boundaries, dependencies, and intended frame lifecycle
+- `/docs/api-design/` — API principles, facade contract, and a real foundation-level Rust test
+- `/docs/roadmap/` — the seven phases and future language plans
+- `/docs/contributing/` — useful contributions, design proposals, and project links
+
+Content is maintained in `lib/docs-content.tsx`, with navigation metadata in `lib/docs.ts`. To add a guide, add its metadata and sections; the optional catch-all route statically generates each page. Guides include local table-of-contents anchors, copyable commands, previous/next navigation, and a page filter. The sidebar becomes a small disclosure on mobile.
+
+The website contains the complete public guides. GitHub links are reserved for source code and issue discussions; reading documentation does not require leaving the site. Framework status is based on the current foundation sources, and planned APIs are explicitly labeled.
 
 **No placeholder logo, invented adoption statistics, fake posts, or dead `#` links are included.** Blog navigation leads to the homepage's workbench note, which links to actual architecture documentation. The Examples link leads to the labeled design study while the framework is still being built. Replace these anchors with dedicated routes when real articles and runnable examples exist.
 

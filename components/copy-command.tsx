@@ -3,7 +3,19 @@
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/icon";
 
-export function CopyCommand({ value }: { value: string }) {
+export function CopyCommand({
+  value,
+  title = "your terminal",
+  note = "Git + Rust stable. Setup details live in the contributor guide.",
+  prompt = true,
+  copyLabel = "Copy contributor setup commands",
+}: {
+  value: string;
+  title?: string;
+  note?: string | null;
+  prompt?: boolean;
+  copyLabel?: string;
+}) {
   const [status, setStatus] = useState<"idle" | "copied" | "failed">("idle");
   const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const commandRef = useRef<HTMLPreElement>(null);
@@ -37,12 +49,12 @@ export function CopyCommand({ value }: { value: string }) {
     <div className="border border-terminal-line bg-terminal">
       <div className="flex min-h-11 items-center justify-between gap-4 border-b border-terminal-line px-4 text-[11px] text-dim">
         <span className="flex items-center gap-2">
-          <Icon name="terminal" className="size-3" /> your terminal
+          <Icon name="terminal" className="size-3" /> {title}
         </span>
         <button
           type="button"
           onClick={copy}
-          aria-label="Copy contributor setup commands"
+          aria-label={copyLabel}
           className="inline-flex min-h-10 items-center gap-2 text-muted hover:text-foreground"
         >
           <span aria-live="polite">
@@ -65,9 +77,11 @@ export function CopyCommand({ value }: { value: string }) {
         <code>
           {value.split("\n").map((line, index) => (
             <span key={line}>
-              <span className="select-none text-dim" aria-hidden="true">
-                ${" "}
-              </span>
+              {prompt && (
+                <span className="select-none text-dim" aria-hidden="true">
+                  ${" "}
+                </span>
+              )}
               <span className={index === 0 ? "text-foreground" : "text-muted"}>
                 {line}
               </span>
@@ -76,9 +90,11 @@ export function CopyCommand({ value }: { value: string }) {
           ))}
         </code>
       </pre>
-      <div className="border-t border-terminal-line px-5 py-3 text-[10px] leading-relaxed text-dim">
-        Git + Rust stable. Setup details live in the contributor guide.
-      </div>
+      {note && (
+        <div className="border-t border-terminal-line px-5 py-3 text-[10px] leading-relaxed text-dim">
+          {note}
+        </div>
+      )}
     </div>
   );
 }

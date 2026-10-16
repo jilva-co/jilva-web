@@ -2,6 +2,7 @@ import type { SVGProps } from "react";
 
 type IconName =
   | "arrow-right"
+  | "arrow-left"
   | "arrow-up-right"
   | "arrow-down"
   | "github"
@@ -13,6 +14,8 @@ type IconName =
   | "check"
   | "terminal"
   | "menu"
+  | "search"
+  | "chevron-down"
   | "close";
 
 export function Icon({
@@ -36,6 +39,7 @@ export function Icon({
 
   const paths: Record<Exclude<IconName, "github">, React.ReactNode> = {
     "arrow-right": <path d="M4 12h15m-6-6 6 6-6 6" />,
+    "arrow-left": <path d="M20 12H5m6-6-6 6 6 6" />,
     "arrow-up-right": <path d="M6 18 18 6M6 6h12v12" />,
     "arrow-down": <path d="M12 4v15m-6-6 6 6 6-6" />,
     bolt: <path d="m13 2-9 12h7l-1 8 10-12h-7l1-8Z" />,
@@ -71,6 +75,13 @@ export function Icon({
       </>
     ),
     menu: <path d="M4 6h16M4 12h16M4 18h16" />,
+    search: (
+      <>
+        <circle cx="10.5" cy="10.5" r="6.5" />
+        <path d="m16 16 5 5" />
+      </>
+    ),
+    "chevron-down": <path d="m6 9 6 6 6-6" />,
     close: <path d="m5 5 14 14M5 19 19 5" />,
   };
 
