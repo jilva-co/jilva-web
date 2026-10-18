@@ -1,9 +1,32 @@
 import type { Metadata, Viewport } from "next";
-import "@fontsource/geist-mono/400.css";
-import "@fontsource/geist-mono/500.css";
-import "@fontsource/silkscreen/400.css";
+import localFont from "next/font/local";
 import "./globals.css";
 import { site } from "@/lib/site";
+
+const monoFont = localFont({
+  src: [
+    {
+      path: "../node_modules/@fontsource/geist-mono/files/geist-mono-latin-400-normal.woff2",
+      weight: "400",
+    },
+    {
+      path: "../node_modules/@fontsource/geist-mono/files/geist-mono-latin-500-normal.woff2",
+      weight: "500",
+    },
+  ],
+  variable: "--font-geist-mono",
+  display: "swap",
+  fallback: ["Consolas", "Courier New", "monospace"],
+  adjustFontFallback: false,
+});
+
+const pixelFont = localFont({
+  src: "../node_modules/@fontsource/silkscreen/files/silkscreen-latin-400-normal.woff2",
+  variable: "--font-pixel",
+  weight: "400",
+  display: "swap",
+  adjustFontFallback: false,
+});
 
 export const metadata: Metadata = {
   title: "Jilva — Beautiful terminal applications",
@@ -32,7 +55,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0b0d0f",
+  themeColor: "#000000",
   colorScheme: "dark",
 };
 
@@ -40,7 +63,12 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      data-scroll-behavior="smooth"
+      className={`${monoFont.variable} ${pixelFont.variable}`}
+      style={{ colorScheme: "only dark", backgroundColor: "#000000" }}
+    >
       <body>
         <a href="#main" className="skip-link">
           Skip to content

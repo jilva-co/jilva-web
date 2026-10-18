@@ -20,8 +20,11 @@ type IconName =
 
 export function Icon({
   name,
+  className,
   ...props
 }: SVGProps<SVGSVGElement> & { name: IconName }) {
+  const classes = ["icon", `icon-${name}`, className].filter(Boolean).join(" ");
+
   if (name === "github") {
     return (
       <svg
@@ -30,6 +33,7 @@ export function Icon({
         height="18"
         fill="currentColor"
         aria-hidden="true"
+        className={classes}
         {...props}
       >
         <path d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.55.1.76-.24.76-.53v-2.07c-3.09.67-3.74-1.31-3.74-1.31-.5-1.28-1.23-1.62-1.23-1.62-1.01-.69.08-.68.08-.68 1.11.08 1.7 1.14 1.7 1.14.99 1.69 2.6 1.2 3.23.92.1-.72.39-1.21.7-1.49-2.47-.28-5.06-1.23-5.06-5.49 0-1.21.43-2.2 1.14-2.98-.12-.28-.5-1.41.11-2.94 0 0 .93-.3 3.05 1.14a10.6 10.6 0 0 1 5.55 0c2.12-1.44 3.05-1.14 3.05-1.14.6 1.53.23 2.66.11 2.94.71.78 1.14 1.77 1.14 2.98 0 4.27-2.59 5.2-5.07 5.48.4.35.75 1.02.75 2.06V22c0 .3.2.64.76.53A11.1 11.1 0 0 0 12 .9Z" />
@@ -96,6 +100,7 @@ export function Icon({
       strokeLinecap="square"
       strokeLinejoin="miter"
       aria-hidden="true"
+      className={classes}
       {...props}
     >
       {paths[name]}

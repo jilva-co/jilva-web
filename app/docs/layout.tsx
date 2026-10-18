@@ -1,5 +1,4 @@
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
+import { Logo } from "@/components/logo";
 import "./docs.css";
 
 export default function DocsLayout({
@@ -8,10 +7,11 @@ export default function DocsLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div id="top" className="page-shell">
-      <Header />
+    <div id="top" className="docs-shell">
+      <div className="docs-home-link">
+        <Logo />
+      </div>
       {children}
-      <Footer />
     </div>
   );
 }

@@ -2,24 +2,19 @@ import Image from "next/image";
 
 export function Logo({ compact = false }: { compact?: boolean }) {
   return (
-    <a
-      href="/#top"
-      aria-label="Jilva home"
-      className="brand inline-flex shrink-0 items-center gap-2.5 text-foreground"
-    >
+    <a href="/" aria-label="Jilva home" className="brand">
       <span className="brand-symbol" aria-hidden="true">
         <Image
-          src="/jilva-logo.png"
+          src="/jilva-mark.webp"
           alt=""
-          width={54}
-          height={54}
+          width={40}
+          height={40}
           unoptimized
-          priority={!compact}
         />
       </span>
       {!compact && (
-        <span className="text-[21px] font-medium tracking-[-1.2px]">
-          jilva<span className="text-accent">.</span>
+        <span>
+          jilva<span className="brand-period">.</span>
         </span>
       )}
     </a>
