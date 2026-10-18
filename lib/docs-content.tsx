@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
 import { CopyCommand } from "@/components/copy-command";
 import { Icon } from "@/components/icon";
@@ -45,13 +44,13 @@ function ReadNext({ slugs }: { slugs: DocSlug[] }) {
       {slugs.map((slug) => {
         const page = getDocPage(slug)!;
         return (
-          <Link href={docHref(slug)} key={slug}>
+          <a href={docHref(slug)} key={slug}>
             <div>
               <span>{page.title}</span>
               <p>{page.description}</p>
             </div>
             <Icon name="arrow-right" className="size-4 shrink-0 text-accent" />
-          </Link>
+          </a>
         );
       })}
     </div>
@@ -150,9 +149,9 @@ const sections: Record<DocSlug, DocSection[]> = {
             </table>
           </div>
           <p>
-            Start with the{" "}
-            <Link href="/docs/getting-started/">setup guide</Link>. You do not
-            need a terminal application idea to make a useful contribution.
+            Start with the <a href="/docs/getting-started/">setup guide</a>. You
+            do not need a terminal application idea to make a useful
+            contribution.
           </p>
         </>
       ),
@@ -173,7 +172,7 @@ const sections: Record<DocSlug, DocSection[]> = {
             Rust alpha, with no promised release dates.
           </p>
           <p>
-            See the <Link href="/docs/roadmap/">roadmap</Link> for the full
+            See the <a href="/docs/roadmap/">roadmap</a> for the full
             progression.
           </p>
         </>
@@ -286,9 +285,9 @@ const sections: Record<DocSlug, DocSection[]> = {
       content: (
         <>
           <p>
-            Explore the <Link href="/docs/architecture/">crate boundaries</Link>
-            , then read the <Link href="/docs/api-design/">API principles</Link>
-            . For the daily check sequence and troubleshooting, continue to the
+            Explore the <a href="/docs/architecture/">crate boundaries</a>, then
+            read the <a href="/docs/api-design/">API principles</a>. For the
+            daily check sequence and troubleshooting, continue to the
             development guide.
           </p>
           <ReadNext slugs={["development", "architecture"]} />
@@ -593,8 +592,8 @@ const sections: Record<DocSlug, DocSection[]> = {
             guides and conceptual documentation live here on the website.
           </p>
           <p>
-            Continue to <Link href="/docs/api-design/">API principles</Link> to
-            see how the boundaries shape the developer experience.
+            Continue to <a href="/docs/api-design/">API principles</a> to see
+            how the boundaries shape the developer experience.
           </p>
         </>
       ),
@@ -722,8 +721,8 @@ const sections: Record<DocSlug, DocSection[]> = {
             a date on the roadmap.
           </p>
           <p>
-            See <Link href="/docs/contributing/">Contributing</Link> for the
-            proposal process.
+            See <a href="/docs/contributing/">Contributing</a> for the proposal
+            process.
           </p>
         </>
       ),
@@ -806,7 +805,9 @@ const sections: Record<DocSlug, DocSection[]> = {
                 <div className="docs-roadmap-heading">
                   <h3>{title}</h3>
                   <span
-                    className={status === "Current" ? "text-green" : "text-dim"}
+                    className={
+                      status === "Current" ? "text-accent" : "text-dim"
+                    }
                   >
                     {status}
                   </span>
@@ -945,8 +946,8 @@ const sections: Record<DocSlug, DocSection[]> = {
             <li>Update documentation when behavior or a contract changes.</li>
           </ul>
           <p>
-            Use the <Link href="/docs/development/">development guide</Link> for
-            the full verification sequence.
+            Use the <a href="/docs/development/">development guide</a> for the
+            full verification sequence.
           </p>
         </>
       ),

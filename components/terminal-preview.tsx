@@ -1,189 +1,203 @@
 "use client";
 
-import { useRef, useState, type KeyboardEvent } from "react";
-import { Icon } from "@/components/icon";
+import {
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+} from "react";
 
-const initialTasks = [
-  { name: "Make something useful", detail: "the idea", done: true },
-  { name: "Give it a little character", detail: "the craft", done: true },
-  { name: "Bring it to the terminal", detail: "the canvas", done: false },
-];
+const modes = ["signal", "orbit", "terrain"] as const;
+const wave = Array.from({ length: 43 }, (_, i) =>
+  Math.round(20 + Math.abs(Math.sin(i * 0.61) * Math.cos(i * 0.19)) * 78),
+);
+const terrain = Array.from({ length: 17 }, (_, row) =>
+  Array.from({ length: 47 }, (_, column) => {
+    const peak = 7 + Math.sin(column * 0.19) * 4 + Math.cos(column * 0.43) * 2;
+    if (row < peak) return " ";
+    if (row < peak + 1) return "▄";
+    return (column + row) % 3 === 0 ? "░" : "▒";
+  }).join(""),
+).join("\n");
 
 export function TerminalPreview() {
-  const [tab, setTab] = useState<"preview" | "idea">("preview");
-  const [tasks, setTasks] = useState(initialTasks);
-  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const completed = tasks.filter((task) => task.done).length;
+  const [mode, setMode] = useState<(typeof modes)[number]>("signal");
+  const [intensity, setIntensity] = useState(65);
+  const [playing, setPlaying] = useState(true);
+  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
 
-  function onTabKeyDown(
-    event: KeyboardEvent<HTMLButtonElement>,
-    index: number,
-  ) {
-    let nextIndex: number;
-    if (event.key === "ArrowRight" || event.key === "ArrowLeft")
-      nextIndex = 1 - index;
-    else if (event.key === "Home") nextIndex = 0;
-    else if (event.key === "End") nextIndex = 1;
+  function navigate(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    let next: number;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown")
+      next = (index + 1) % modes.length;
+    else if (event.key === "ArrowLeft" || event.key === "ArrowUp")
+      next = (index + modes.length - 1) % modes.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = modes.length - 1;
     else return;
     event.preventDefault();
-    setTab(nextIndex === 0 ? "preview" : "idea");
-    tabRefs.current[nextIndex]?.focus();
+    setMode(modes[next]);
+    tabs.current[next]?.focus();
   }
 
   return (
-    <div id="playground" className="terminal-study min-w-0 scroll-mt-8">
-      <div className="mb-3.5 flex items-center justify-between gap-4 text-[11px] tracking-wide text-dim">
-        <span className="flex items-center gap-2">
-          <Icon name="terminal" className="size-3.5" /> A LITTLE OF WHAT
-          WE&apos;RE BUILDING
-        </span>
-        <span className="text-muted">STUDY / 001</span>
-      </div>
-      <div className="terminal-frame border border-terminal-line bg-terminal">
-        <div className="flex h-11 items-center justify-between border-b border-terminal-line px-4 text-[11px] text-dim">
-          <div className="flex items-center gap-1.5" aria-hidden="true">
-            <span className="size-1.5 bg-[#555c65]" />
-            <span className="size-1.5 bg-[#3d444d]" />
-            <span className="size-1.5 bg-[#303640]" />
-          </div>
-          <span>jilva — a terminal, considered.</span>
-          <Icon name="terminal" className="size-3" />
-        </div>
+    <div className={"signal-console " + (playing ? "is-playing" : "is-paused")}>
+      <div className="console-body">
         <div
+          className="console-tabs"
           role="tablist"
-          aria-label="Terminal design study"
-          className="flex border-b border-terminal-line px-5"
+          aria-label="Signal lab views"
+          aria-orientation="vertical"
         >
-          {(["preview", "idea"] as const).map((item, index) => (
+          {modes.map((item, index) => (
             <button
               key={item}
-              ref={(element) => {
-                tabRefs.current[index] = element;
-              }}
               type="button"
+              ref={(element) => {
+                tabs.current[index] = element;
+              }}
+              id={"view-" + item}
               role="tab"
-              id={`tab-${item}`}
-              aria-controls={`panel-${item}`}
-              aria-selected={tab === item}
-              tabIndex={tab === item ? 0 : -1}
-              onClick={() => setTab(item)}
-              onKeyDown={(event) => onTabKeyDown(event, index)}
-              className={`terminal-tab -mb-px border-b px-3 py-3 text-[11px] ${tab === item ? "border-accent text-accent" : "border-transparent text-dim hover:text-muted"}`}
+              aria-controls={"display-" + item}
+              aria-selected={mode === item}
+              tabIndex={mode === item ? 0 : -1}
+              onClick={() => setMode(item)}
+              onKeyDown={(event) => navigate(event, index)}
             >
-              {item === "preview" ? "Preview" : "The idea"}
+              {item.toUpperCase()}
             </button>
           ))}
-          <span className="ml-auto flex items-center gap-1.5 text-[10px] text-dim">
-            <span className="size-1 bg-green" /> DESIGN STUDY
-          </span>
         </div>
-        <div
-          role="tabpanel"
-          id="panel-preview"
-          aria-labelledby="tab-preview"
-          hidden={tab !== "preview"}
-          tabIndex={0}
-          className="terminal-body p-6"
-        >
-          <div className="mb-7 flex items-start justify-between gap-3">
-            <div>
-              <p className="mb-2 text-[11px] text-dim">~/a-small-beginning</p>
-              <p className="text-sm text-foreground">
-                Good things start here<span className="text-accent">.</span>
-              </p>
-            </div>
-            <span className="border border-terminal-line px-2 py-1 text-[10px] text-muted">
-              personal
+        <div className="console-display-wrap">
+          <div
+            id="display-signal"
+            role="tabpanel"
+            aria-labelledby="view-signal"
+            tabIndex={0}
+            hidden={mode !== "signal"}
+            className="console-display signal-display"
+          >
+            <span className="sr-only">
+              Animated signal bars. Adjust energy to change their height.
             </span>
-          </div>
-          <div className="mb-2 flex justify-between border-b border-terminal-line pb-2 text-[10px] uppercase tracking-wider text-dim">
-            <span>The checklist</span>
-            <span>status</span>
-          </div>
-          <ul className="space-y-0.5">
-            {tasks.map((task, index) => (
-              <li key={task.name}>
-                <button
-                  type="button"
-                  aria-pressed={task.done}
-                  onClick={() =>
-                    setTasks(
-                      tasks.map((item, itemIndex) =>
-                        itemIndex === index
-                          ? { ...item, done: !item.done }
-                          : item,
-                      ),
-                    )
+            <div
+              className="signal-bars"
+              aria-hidden="true"
+              style={{ "--energy": intensity / 100 } as CSSProperties}
+            >
+              {wave.map((height, index) => (
+                <span
+                  key={index}
+                  style={
+                    {
+                      "--bar-height": height + "%",
+                      "--bar-delay": index * -83 + "ms",
+                      "--bar-speed": 800 + (index % 7) * 120 + "ms",
+                    } as CSSProperties
                   }
-                  className="task-row flex w-full items-center gap-2.5 py-3 text-left text-[12px] hover:bg-white/[0.025]"
-                >
-                  <span
-                    className={task.done ? "text-green" : "text-accent"}
-                    aria-hidden="true"
-                  >
-                    {task.done ? "[✓]" : "[ ]"}
-                  </span>
-                  <span
-                    className={task.done ? "text-muted" : "text-foreground"}
-                  >
-                    {task.name}
-                  </span>
-                  <span className="ml-auto hidden text-[10px] text-dim min-[420px]:inline">
-                    {task.detail}
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
-          <div className="mt-6 flex items-center justify-between border-t border-terminal-line pt-3 text-[10px] text-dim">
-            <span aria-live="polite">
-              <span className="text-green">{completed}</span> of 3 things, a
-              little closer.
-            </span>
-            <span className="text-accent">↵ toggle</span>
+                />
+              ))}
+            </div>
           </div>
-        </div>
-        <div
-          role="tabpanel"
-          id="panel-idea"
-          aria-labelledby="tab-idea"
-          hidden={tab !== "idea"}
-          tabIndex={0}
-          className="terminal-body p-6"
-        >
-          <p className="mb-5 text-[11px] text-dim">
-            // design direction, not a released API
-          </p>
-          <pre className="overflow-x-auto text-[12px] leading-[2.2] text-muted">
-            <code>
-              <span className="text-lilac">describe</span>
-              {" your interface\n"}
-              <span className="text-dim"> ├─ </span>
-              {"layout with intent\n"}
-              <span className="text-dim"> ├─ </span>
-              {"compose small pieces\n"}
-              <span className="text-dim"> └─ </span>
-              {"make room for your idea\n\n"}
-              <span className="text-lilac">let</span>
-              {" the framework handle\n"}
-              <span className="text-dim"> ├─ </span>
-              {"terminal details\n"}
-              <span className="text-dim"> └─ </span>
-              {"the thoughtful defaults"}
-            </code>
-          </pre>
-        </div>
-        <div className="flex items-center justify-between gap-3 border-t border-terminal-line bg-[#13171c] px-4 py-2 text-[10px] text-dim">
-          <span>
-            <span className="text-accent">jilva</span> / canvas
-          </span>
-          <span>Rust first. Details matter.</span>
+          <div
+            id="display-orbit"
+            role="tabpanel"
+            aria-labelledby="view-orbit"
+            tabIndex={0}
+            hidden={mode !== "orbit"}
+            className="console-display orbit-display"
+          >
+            <svg
+              viewBox="0 0 500 310"
+              width="500"
+              height="310"
+              preserveAspectRatio="xMidYMid meet"
+              fill="none"
+              aria-hidden="true"
+              style={
+                {
+                  "--orbit-scale": 0.65 + (intensity / 100) * 0.35,
+                } as CSSProperties
+              }
+            >
+              <g className="lab-orbit-scale">
+                <g className="lab-orbit">
+                  <circle cx="250" cy="155" r="105" />
+                  {[28, 60, 86].map((radius) => (
+                    <ellipse
+                      key={radius}
+                      cx="250"
+                      cy="155"
+                      rx={radius}
+                      ry="105"
+                    />
+                  ))}
+                  {[30, 65, 90].map((radius) => (
+                    <ellipse
+                      key={radius}
+                      cx="250"
+                      cy="155"
+                      rx="105"
+                      ry={radius}
+                    />
+                  ))}
+                </g>
+                <ellipse
+                  cx="250"
+                  cy="155"
+                  rx="210"
+                  ry="45"
+                  transform="rotate(-20 250 155)"
+                />
+              </g>
+            </svg>
+            <span className="sr-only">
+              A wireframe orbit. Adjust energy to change its scale.
+            </span>
+          </div>
+          <div
+            id="display-terrain"
+            role="tabpanel"
+            aria-labelledby="view-terrain"
+            tabIndex={0}
+            hidden={mode !== "terrain"}
+            className="console-display terrain-display"
+          >
+            <pre
+              aria-hidden="true"
+              style={{ transform: "scaleY(" + (0.65 + intensity / 140) + ")" }}
+            >
+              {terrain}
+            </pre>
+            <span className="sr-only">
+              A landscape made of terminal characters. Adjust energy to change
+              its height.
+            </span>
+          </div>
+          <div className="console-controls">
+            <label className="energy-control" htmlFor="signal-energy">
+              <span>ENERGY</span>
+              <input
+                id="signal-energy"
+                type="range"
+                min="10"
+                max="100"
+                value={intensity}
+                onChange={(event) => setIntensity(Number(event.target.value))}
+              />
+              <output htmlFor="signal-energy">{intensity}%</output>
+            </label>
+            <button
+              type="button"
+              className="signal-power"
+              aria-pressed={!playing}
+              onClick={() => setPlaying(!playing)}
+            >
+              {playing ? "Ⅱ PAUSE" : "▶ RESUME"}
+            </button>
+          </div>
         </div>
       </div>
-      <p className="mt-3.5 text-right text-[11px] text-dim">
-        <span aria-hidden="true">↳</span> an interactive sketch of the
-        direction. try it.
-      </p>
     </div>
   );
 }

@@ -1,17 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Icon } from "@/components/icon";
 
 export function CopyCommand({
   value,
   title = "your terminal",
+  showTitle = true,
   note = "Git + Rust stable. Setup details live in the contributor guide.",
   prompt = true,
   copyLabel = "Copy contributor setup commands",
 }: {
   value: string;
   title?: string;
+  showTitle?: boolean;
   note?: string | null;
   prompt?: boolean;
   copyLabel?: string;
@@ -19,6 +20,7 @@ export function CopyCommand({
   const [status, setStatus] = useState<"idle" | "copied" | "failed">("idle");
   const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const commandRef = useRef<HTMLPreElement>(null);
+  const lines = value.split("\n");
 
   useEffect(
     () => () => {
@@ -34,9 +36,9 @@ export function CopyCommand({
     } catch {
       setStatus("failed");
       if (commandRef.current) {
-        const selection = window.getSelection();
         const range = document.createRange();
         range.selectNodeContents(commandRef.current);
+        const selection = window.getSelection();
         selection?.removeAllRanges();
         selection?.addRange(range);
       }
@@ -46,55 +48,57 @@ export function CopyCommand({
   }
 
   return (
-    <div className="border border-terminal-line bg-terminal">
-      <div className="flex min-h-11 items-center justify-between gap-4 border-b border-terminal-line px-4 text-[11px] text-dim">
-        <span className="flex items-center gap-2">
-          <Icon name="terminal" className="size-3" /> {title}
-        </span>
+    <div className="command-block">
+      <div
+        className={
+          showTitle
+            ? "command-heading"
+            : "command-heading command-heading--copy-only"
+        }
+      >
+        {showTitle && <span>{title}</span>}
         <button
           type="button"
           onClick={copy}
           aria-label={copyLabel}
-          className="inline-flex min-h-10 items-center gap-2 text-muted hover:text-foreground"
+          className="copy-button"
         >
-          <span aria-live="polite">
+          <span
+            role="status"
+            aria-live="polite"
+            className={
+              status === "copied" ? "copy-feedback is-copied" : "copy-feedback"
+            }
+          >
             {status === "copied"
-              ? "Copied"
+              ? "Copied ✓"
               : status === "failed"
                 ? "Select & copy"
                 : "Copy"}
           </span>
-          <Icon
-            name={status === "copied" ? "check" : "copy"}
-            className="size-3.5"
-          />
         </button>
       </div>
       <pre
         ref={commandRef}
-        className="overflow-x-auto p-5 text-[11px] leading-[2.4] sm:p-6 sm:text-[13px]"
+        className="command-code"
+        tabIndex={0}
+        aria-label={title}
       >
         <code>
-          {value.split("\n").map((line, index) => (
-            <span key={line}>
+          {lines.map((line, index) => (
+            <span key={index}>
               {prompt && (
-                <span className="select-none text-dim" aria-hidden="true">
+                <span className="command-prompt" aria-hidden="true">
                   ${" "}
                 </span>
               )}
-              <span className={index === 0 ? "text-foreground" : "text-muted"}>
-                {line}
-              </span>
-              {index < value.split("\n").length - 1 ? "\n" : ""}
+              {line}
+              {index < lines.length - 1 ? "\n" : ""}
             </span>
           ))}
         </code>
       </pre>
-      {note && (
-        <div className="border-t border-terminal-line px-5 py-3 text-[10px] leading-relaxed text-dim">
-          {note}
-        </div>
-      )}
+      {note && <p className="command-note">{note}</p>}
     </div>
   );
 }

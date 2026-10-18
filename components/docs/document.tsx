@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
 import { DocsSidebar } from "@/components/docs/sidebar";
 import { Icon } from "@/components/icon";
@@ -22,16 +21,12 @@ export function DocsDocument({
       <DocsSidebar activeSlug={page.slug} />
       <main id="main" tabIndex={-1} className="docs-main">
         <div className="docs-breadcrumb">
-          <Link href="/docs/">Docs</Link>
+          <a href="/docs/">Docs</a>
           <span aria-hidden="true">/</span>
           <span className="text-muted">{page.title}</span>
-          <span className="docs-status">
-            <span className="size-1 bg-green" /> FOUNDATION
-          </span>
         </div>
         <article aria-labelledby="document-title" className="docs-article">
           <header className="docs-article-header">
-            <p className="docs-eyebrow">{page.group}</p>
             <h1 id="document-title">
               {page.title}
               <span className="text-accent">.</span>
@@ -61,35 +56,34 @@ export function DocsDocument({
             className="docs-pagination"
           >
             {previous ? (
-              <Link
+              <a
                 href={docHref(previous.slug)}
-                className="docs-pagination-link"
+                className="docs-pagination-link link-arrow"
               >
                 <span className="docs-pagination-label">
                   <Icon name="arrow-left" className="size-3" /> Previous
                 </span>
                 <span>{previous.title}</span>
-              </Link>
+              </a>
             ) : (
               <div />
             )}
             {next && (
-              <Link
+              <a
                 href={docHref(next.slug)}
-                className="docs-pagination-link text-right"
+                className="docs-pagination-link link-arrow text-right"
               >
                 <span className="docs-pagination-label justify-end">
                   Next <Icon name="arrow-right" className="size-3" />
                 </span>
                 <span>{next.title}</span>
-              </Link>
+              </a>
             )}
           </nav>
         </article>
       </main>
       <aside className="docs-toc">
         <nav aria-label="On this page">
-          <p>ON THIS PAGE</p>
           <ul>
             {sections.map((section) => (
               <li key={section.id}>
@@ -97,13 +91,13 @@ export function DocsDocument({
               </li>
             ))}
           </ul>
-          <Link href="/docs/contributing/" className="docs-toc-contribute">
+          <a href="/docs/contributing/" className="docs-toc-contribute">
             Have a question?
             <br />
             <span>
               Find your way in <span aria-hidden="true">↗</span>
             </span>
-          </Link>
+          </a>
         </nav>
       </aside>
     </div>
